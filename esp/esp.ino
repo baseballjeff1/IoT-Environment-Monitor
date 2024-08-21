@@ -1,4 +1,10 @@
-#include <WiFi.h>;
+#include <WiFi.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BME280.h>
+
+#define BME280_ADDRESS 0x76
+
+Adafruit_BME280 bme;
 
 const char* ssid = "Dodgers#1";
 const char* password = "calmhorse123";
@@ -17,12 +23,31 @@ void setup() {
   Serial.println("Connected to the WiFi network");
   Serial.print("IP adress: ");
   Serial.println(WiFi.localIP());
+
+  if (bme.begin(BME280_ADDRESS)) {
+    Serial.println("Connected to the BME280 sensor!");
+    Serial.println("");
+  }
+}
+
+float toFahrenheit(float temp) {
+  return (temp * 9 / 5) + 32;
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  if (WiFi.status() == WL_CONNECTED) {
-    Serial.println("You can try to ping me");
-    delay(5000);
-  }
+  Serial.print("Temperature: ");
+  Serial.print(toFahrenheit(bme.readTemperature()));
+  Serial.println("°F");
+
+  Serial.print("Pressure: ");
+  Serial.print(bme.readPressure());
+  Serial.println("hPa");
+
+  Serial.print("Humidity: ");
+  Serial.print(bme.readHumidity());
+  Serial.println("%");
+  Serial.println("");
+
+  delay(3000);
 }
