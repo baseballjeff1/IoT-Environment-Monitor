@@ -1,10 +1,13 @@
 #include <WiFi.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BME280.h>
+#include "MAX30105.h"
 
 #define BME280_ADDRESS 0x76
 
 Adafruit_BME280 bme;
+
+MAX30105 particleSensor;
 
 const char* ssid = "Dodgers#1";
 const char* password = "calmhorse123";
@@ -27,6 +30,10 @@ void setup() {
   if (bme.begin(BME280_ADDRESS)) {
     Serial.println("Connected to the BME280 sensor!");
     Serial.println("");
+  }
+
+  if (particleSensor.begin()) {
+    Serial.println("Connected to the MAX30102 Sensor!");
   }
 }
 
