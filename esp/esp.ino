@@ -1,4 +1,4 @@
-#include "secrets.h"
+#include "secrets.h" // private file including variables for my WiFi and AWS IoT private keys & certificates
 #include <WiFi.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BME280.h>
@@ -6,6 +6,7 @@
 #include <ArduinoJson.h>
 #include <WiFiClientSecure.h>
 
+// MQTT publish & subscribe topics
 #define AWS_IOT_PUBLISH_TOPIC "esp32/pub"
 #define AWS_IOT_SUBSCRIBE_TOPIC "esp32/sub"
 
@@ -14,9 +15,10 @@ PubSubClient client(net);
 
 #define BME280_ADDRESS 0x76
 
-Adafruit_BME280 bme;
+Adafruit_BME280 bme; // BME280 object
 
 void connectAWS() {
+  // this function is called in void setup to connect to wifi and establish a connection to AWS IoT
   WiFi.begin(SSID, PASSWORD);
   while (WiFi.status() != WL_CONNECTED) {
     Serial.println("...");
@@ -24,6 +26,7 @@ void connectAWS() {
   }
   Serial.println("Connected to the WiFi network");
 
+  // sending all the certifications and keys to AWS IoT
   net.setCACert(AWS_CERT_CA);
   net.setCertificate(AWS_CERT_CRT);
   net.setPrivateKey(AWS_PRIVATE_KEY);
@@ -42,15 +45,18 @@ void connectAWS() {
     return;
   }
 
+  // subscribe to esp32/sub topic
   client.subscribe(AWS_IOT_SUBSCRIBE_TOPIC);
 
   Serial.println("AWS IoT Connected!");
 }
 
 void publishMessage() {
+  // this function will take temperature, pressure, and humidity readings from the BME280 sensor and write them into a JSON document
+  // it will then serialize the JSON doc to an array and publish it to esp32/pub topic
   StaticJsonDocument<200> doc;
   doc["temperature °F"] = floor(toFahrenheit(bme.readTemperature()));
-  doc["pressure hPa"] = floor(bme.readPressure());
+  doc["pressure Pa"] = floor(bme.readPressure());
   doc["humidity %"] = floor(bme.readHumidity());
   char jsonBuffer[512];
   serializeJson(doc, jsonBuffer);
@@ -64,17 +70,15 @@ float toFahrenheit(float temp) {
 
 void setup() {
   Serial.begin(115200);
-  
   connectAWS();
-  delay(1000);
 
   if (bme.begin(BME280_ADDRESS)) {
     Serial.println("Connected to the BME280 sensor!");
-    Serial.println("");
   }
 }
 
 void loop() {
+  // publishes the data to AWS IoT console every 5 seconds
   publishMessage();
   client.loop();
   delay(5000);
