@@ -2,4 +2,4 @@ AmazonRootCA1.pem
 Private_key.pem.key
 Public_key.pem.key
 Dev_Cert.pem.crt
-esp/secrets.h
+bme280-aws/secrets.h
