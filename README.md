@@ -1,6 +1,6 @@
 # About the Project
 
-My Iot Environmental Monitoring System is an experimental project that I conducted to explore how IoT devices work and what role cloud services play into it.
+My IoT Environmental Monitoring System is an experimental project that I conducted to explore how IoT devices work and what role cloud services play into it.
 Throughout the researching process, I understood what IoT and it's impact on real-world industry. 
 It was a great opportunity to learn how I could leverage my interests in both hardware and software to make awesome projects from real-time sensor data.
 The project's materials are a breadboard, ESP32 WiFi microcontroller, jumper wires, and a BME280 module.
